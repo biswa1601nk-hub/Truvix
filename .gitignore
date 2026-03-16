@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.log
+logo.png
+favicon.png
+logo_sticker.png
+test-serper.json
+.antigravity/
+.gemini/

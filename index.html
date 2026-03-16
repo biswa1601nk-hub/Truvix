@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truvix | Decentralized Verification</title>
+
+    <!-- Meta/SEO -->
+    <meta name="description"
+        content="Decentralized News Verification Portal. Verify whether news is true or fake seamlessly.">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,600;0,800;0,900;1,800&family=Oswald:wght@700&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Bulma CSS for Globe Map Popup -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBase: '#02040a',
+                        darkSurface: '#0b0f19',
+                        brandPrimary: '#00d2ff',
+                        brandSecondary: '#3a7bd5',
+                        truth: '#10b981',
+                        fake: '#ef4444'
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 2s infinite linear'
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon': '0 0 20px rgba(0, 210, 255, 0.4)',
+                        'neon-truth': '0 0 20px rgba(16, 185, 129, 0.4)',
+                        'neon-fake': '0 0 20px rgba(239, 68, 68, 0.4)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.global.min.js"></script>
+
+    <!-- Three.js for Globe -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body
+    class="bg-darkBase text-slate-200 antialiased overflow-x-hidden selection:bg-brandPrimary selection:text-darkBase">
+
+    <!-- Cinematic Background Stack -->
+    <div class="cyber-background-container">
+        <!-- Noise Texture Layer -->
+        <div class="noise-texture"></div>
+        
+        <!-- Structural Grid Layer -->
+        <div class="cyber-grid"></div>
+        
+        <!-- Scanlines Layer -->
+        <div class="scanlines"></div>
+
+        <!-- Vignettes Layers -->
+        <div class="vignette-v"></div>
+        <div class="vignette-h"></div>
+    </div>
+
+    <!-- Particles Map Background -->
+    <canvas id="canvas-particles"
+        class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none mix-blend-screen opacity-70"></canvas>
+    <!-- Site Header -->
+    <header
+        class="fixed w-full top-0 z-40 bg-darkBase/80 backdrop-blur-md border-b flex justify-between items-center border-slate-800/50 transition-all duration-300 py-4 px-6 md:px-12">
+        <a href="#" class="flex items-center gap-3 group">
+            <div
+                class="w-10 h-10 rounded-lg bg-gradient-to-br from-brandPrimary to-brandSecondary flex items-center justify-center shadow-neon group-hover:scale-105 transition-transform">
+                <i class="fa-solid fa-shield text-darkBase text-xl"></i>
+            </div>
+            <span class="font-display font-bold text-2xl tracking-widest text-white uppercase">Tru<span
+                    class="text-brandPrimary">vix</span></span>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8 text-xs font-bold tracking-widest uppercase text-slate-400">
+            <a href="#verify" class="hover:text-brandPrimary transition-colors">Verify News</a>
+            <a href="#map-section" class="hover:text-brandPrimary transition-colors">Global Map</a>
+            <a href="#latest-news" class="hover:text-brandPrimary transition-colors">Latest News</a>
+            
+            <span id="auth-user-name" class="hidden text-brandPrimary font-bold tracking-widest uppercase"></span>
+            <button id="logout-btn" onclick="handleLogout()" class="hidden text-slate-500 hover:text-red-500 transition-colors uppercase">
+                Logout
+            </button>
+            <button id="login-btn" onclick="toggleLoginModal()" class="text-white hover:text-brandPrimary transition-colors uppercase">
+                Sign In
+            </button>
+
+            <button onclick="toggleExpertChat()"
+                class="btn-primary transform hover:scale-105">
+                Expert Chat
+            </button>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden flex items-center gap-4">
+            <span id="mobile-auth-name" class="hidden text-brandPrimary text-xs font-bold uppercase"></span>
+            <button id="mobile-logout-btn" class="hidden text-slate-500 hover:text-red-500" onclick="handleLogout()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+            <button id="mobile-login-btn" class="text-white hover:text-brandPrimary" onclick="toggleLoginModal()">
+                <i class="fa-solid fa-user"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Login/Auth Modal -->
+    <div id="login-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-darkBase border-2 border-slate-800 p-8 rounded-2xl w-full max-w-md shadow-2xl relative transform scale-95 transition-transform duration-300"
+            id="login-modal-content">
+            <button onclick="toggleLoginModal()"
+                class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="mb-8 text-center">
+                <h2 class="font-display font-black text-3xl uppercase tracking-widest text-white mb-2">Truvix <span
+                        class="text-brandPrimary">System</span></h2>
+                <p class="text-sm font-mono tracking-widest text-slate-400 uppercase">Authenticate Your Node</p>
+            </div>
+
+            <form class="space-y-5" onsubmit="handleLogin(event)">
+                <div>
+                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-2">Agent
+                        Name</label>
+                    <input type="text" id="login-name" required
+                        class="w-full bg-darkSurface border border-slate-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brandPrimary transition-colors font-mono"
+                        placeholder="e.g. Neo">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-2">Clearance ID /
+                        Email</label>
+                    <input type="email" required
+                        class="w-full bg-darkSurface border border-slate-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brandPrimary transition-colors font-mono"
+                        placeholder="agent@truthfake.org">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-2">Cryptographic
+                        Key / Password</label>
+                    <input type="password" required
+                        class="w-full bg-darkSurface border border-slate-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brandPrimary transition-colors font-mono"
+                        placeholder="••••••••">
+                </div>
+
+                <div class="flex items-center justify-between text-xs font-mono">
+                    <label class="flex items-center text-slate-400 cursor-pointer hover:text-white transition-colors">
+                        <input type="checkbox"
+                            class="mr-2 border-slate-800 bg-darkSurface checked:bg-brandPrimary accent-brandPrimary">
+                        Remember me
+                    </label>
+                    <a href="#" class="text-brandPrimary hover:text-white transition-colors">Reset Key?</a>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-brandPrimary text-darkBase font-bold uppercase tracking-widest py-4 rounded-lg shadow-neon hover:bg-white transition-all mt-4">
+                    LOGIN
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-xs font-mono text-slate-500">
+                New authority node? <a href="#"
+                    class="text-brandPrimary hover:text-white uppercase tracking-widest ml-1">Request Access</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="relative z-10 pt-20">
+        <!-- Hero Section -->
+        <section class="relative px-6 md:px-12 pt-12 lg:pt-20 pb-24">
+            <div
+                class="max-w-[1400px] w-full mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
+                <!-- Text Container (Left side) -->
+                <div class="w-full lg:w-[55%] flex flex-col justify-center items-start text-left">
+                    <div
+                        class="inline-flex items-center gap-2 mb-8 fade-up text-brandPrimary font-mono font-bold tracking-widest text-xs uppercase opacity-80 border-l-2 border-brandPrimary px-4">
+                        Decentralized Consensus Engine v2.0
+                    </div>
+
+                    <!-- Huge Typography matching the style requested -->
+                    <h1
+                        class="text-6xl sm:text-7xl md:text-8xl lg:text-[7rem] font-sans font-black text-white leading-[0.9] mb-8 fade-up uppercase tracking-normal elite-headline">
+                        WE VERIFY <br />
+                        THE TRUTH <br />
+                        <span
+                            class="tech-accent">BEHIND
+                            THE HEADLINES.</span><br />
+                    </h1>
+
+                    <p class="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl fade-up leading-relaxed font-light">
+                        Combat misinformation with our decentralized verification portal. We aggregate consensus from
+                        top
+                        authorities like Times of India, Aajtak, and Hindustan Times to give you real-time authenticity.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center gap-6 fade-up">
+                        <a href="#verify"
+                            class="btn-primary flex items-center justify-center gap-3 w-full sm:w-auto">
+                            <i class="fa-solid fa-magnifying-glass"></i> Verify Article Now
+                        </a>
+                        <a href="#map-section"
+                            class="bg-transparent border border-slate-700 text-white text-sm font-bold uppercase tracking-widest px-8 py-4 rounded-full flex items-center justify-center gap-3 hover:bg-slate-800 transition-colors w-full sm:w-auto">
+                            Explore Globe
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Compass Container (Right side) -->
+                <div class="w-full lg:w-[45%] flex justify-end items-center h-[400px] lg:h-[600px] relative fade-up">
+                    <div id="hero-compass"
+                        class="w-full h-full absolute inset-0 cursor-grab active:cursor-grabbing hover:scale-105 transition-transform duration-700">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Verification Tool Section -->
+        <section id="verify" class="py-24 relative bg-darkBase/90 border-t border-slate-800/80">
+            <div class="max-w-5xl mx-auto px-6">
+                <div class="mb-16">
+                    <h2 class="text-4xl md:text-6xl font-sans font-black text-white mb-4 tracking-tighter uppercase">
+                        News Verification Engine</h2>
+                    <p class="text-slate-400 text-lg">Cross-check unstructured data across reputed journalistic
+                        databases instantly.</p>
+                </div>
+
+                <div class="glass-card p-6 md:p-12 reveal">
+                    <form id="verify-form" class="relative">
+                        <div class="relative flex items-center group">
+                            <input type="text" id="news-url" placeholder="Paste news article URL or snippet here..."
+                                class="w-full bg-darkBase border-2 border-slate-800 text-white rounded-xl py-6 pl-8 pr-40 focus:outline-none focus:border-brandPrimary transition-colors text-lg font-mono">
+                            <button type="submit"
+                                class="absolute right-3 btn-primary !py-3 !px-6 !rounded-lg flex items-center gap-2">
+                                <i class="fa-solid fa-radar pointer-events-none"></i> Scan
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Loading State -->
+                    <div id="verify-loading" class="hidden mt-12 flex flex-col items-center justify-center py-10">
+                        <div class="relative w-16 h-16 mb-6">
+                            <div class="absolute inset-0 border-t-2 border-brandPrimary rounded-full animate-spin">
+                            </div>
+                            <div
+                                class="absolute inset-2 border-l-2 border-brandSecondary rounded-full animate-spin-reverse">
+                            </div>
+                        </div>
+                        <p class="animate-pulse text-brandPrimary font-mono text-sm tracking-widest uppercase">Querying
+                            Decentralized Nodes & Authorities...</p>
+                    </div>
+
+                    <!-- Result State -->
+                    <div id="verify-result" class="hidden mt-10">
+                        <div class="pt-8" id="result-container">
+                            <!-- Dynamic Content Inserted Here via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Intelligence Leaflet Map -->
+        <section id="map-section" class="py-24 relative overflow-hidden bg-darkSurface/50 border-t border-slate-800/50">
+            <div class="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row gap-12">
+                <div class="w-full lg:w-1/3 reveal flex flex-col justify-center">
+                    <h2
+                        class="text-4xl md:text-6xl font-sans font-black text-white mb-6 uppercase tracking-tighter leading-none">
+                        Live Global<br /><span class="text-brandPrimary">Intelligence</span></h2>
+                    <p class="text-slate-400 mb-8 leading-relaxed">
+                        Interact with the map to see real-time misinformation hotspots and verified news drops around
+                        the world. Every pulse represents a detected claim.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-darkBase p-4 border-l-2 border-fake shadow-neon-fake">
+                            <i class="fa-solid fa-satellite-dish text-fake text-xl"></i>
+                            <div>
+                                <h4 class="text-white font-mono text-sm uppercase">FAKE NEWS DETECTED</h4>
+                                <p class="text-xs text-slate-500">Unverified Claims Spread</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-darkBase p-4 border-l-2 border-truth shadow-neon-truth">
+                            <i class="fa-solid fa-shield-check text-truth text-xl"></i>
+                            <div>
+                                <h4 class="text-white font-mono text-sm uppercase">VERIFIED TRUTH DROP</h4>
+                                <p class="text-xs text-slate-500">Backed by Trusted Authorities</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map Container -->
+                <div
+                    class="w-full lg:w-2/3 h-[500px] lg:h-[600px] relative glass-card bg-darkBase overflow-hidden shadow-2xl reveal">
+                    <div id="globe-interactive" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+                    <!-- Globe Context Popup (Bulma Styled) -->
+                    <div id="map-popup" class="card is-hidden"
+                        style="position:absolute; top:1rem; left:1rem; width:320px; z-index:50; background-color: rgba(11, 15, 25, 0.95); box-shadow: 0 0.5em 1em -0.125em rgba(0,0,0, 0.9); border: 1px solid #1e293b; border-radius: 8px; overflow: hidden;">
+                        <header class="card-header" style="border-bottom: 1px solid #1e293b; box-shadow: none;">
+                            <p class="card-header-title has-text-white is-size-6 is-uppercase" id="map-popup-title"
+                                style="font-family: 'Inter', sans-serif; font-weight: 900; margin-bottom: 0;">
+                                Protest Video Verification
+                            </p>
+                            <button class="delete mt-3 mr-3" onclick="closeMapPopup()" aria-label="close"></button>
+                        </header>
+                        <div class="card-content pb-4 pt-4">
+                            <span id="map-popup-status" class="tag is-danger is-light mb-3 has-text-weight-bold"
+                                style="font-family: 'Oswald', sans-serif; letter-spacing: 1px;">FAKE</span>
+                            <div class="content has-text-grey-light is-size-7 mb-4" id="map-popup-desc"
+                                style="font-family: 'Inter', sans-serif;">
+                                Clips from early 2019 being shared as live. Consensus: FAKE.
+                            </div>
+                            <div class="mt-4 pt-3" style="border-top: 1px solid #1e293b;">
+                                <div class="is-flex is-justify-content-space-between is-align-items-center mb-1">
+                                    <span class="has-text-grey is-size-7 is-family-monospace"
+                                        style="font-weight: 600;">LOCATION</span>
+                                    <span id="map-popup-location"
+                                        class="has-text-white is-size-7 is-family-monospace">New Delhi, IN</span>
+                                </div>
+                                <div class="is-flex is-justify-content-space-between is-align-items-center">
+                                    <span class="has-text-grey is-size-7 is-family-monospace"
+                                        style="font-weight: 600;">VERIFIED BY</span>
+                                    <span id="map-popup-authority" class="has-text-info is-size-7 is-family-monospace"
+                                        style="color: #00d2ff !important;">Aajtak Node</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Latest News Feed -->
+        <section id="latest-news" class="py-24 bg-darkBase relative border-t border-slate-800/50">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+                    <div>
+                        <h2
+                            class="text-4xl md:text-6xl font-sans font-black text-white tracking-tighter uppercase mb-2">
+                            Verified News Feed</h2>
+                        <p class="text-slate-400">The latest claims passing through our decentralized portal.</p>
+                    </div>
+                    <a href="#"
+                        class="text-brandPrimary hover:text-white transition-colors text-sm font-mono tracking-widest uppercase flex items-center gap-2">View
+                        Full Archive <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="news-grid">
+                    <!-- Cards injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Expert Float Button -->
+        <div class="fixed bottom-6 right-6 z-30">
+            <button onclick="toggleExpertChat()"
+                class="bg-brandPrimary text-darkBase w-14 h-14 rounded-full shadow-neon flex items-center justify-center text-xl hover:scale-110 transition-transform hover:bg-white group cursor-pointer relative">
+                <i class="fa-solid fa-user-doctor group-hover:hidden"></i>
+                <i class="fa-solid fa-message hidden group-hover:block"></i>
+                <span
+                    class="absolute -top-1 -right-1 w-4 h-4 bg-fake rounded-full shadow-neon-fake animate-pulse border-2 border-darkBase"></span>
+            </button>
+        </div>
+
+        <!-- Expert Chat Panel -->
+        <div id="expert-panel"
+            class="fixed bottom-24 right-6 w-[350px] glass-card z-40 flex flex-col hidden transform origin-bottom-right transition-all overflow-hidden">
+            <div class="p-4 border-b border-slate-800 bg-darkBase flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full border-2 border-brandPrimary overflow-hidden">
+                        <img src="https://i.pravatar.cc/100?img=11" alt="Expert" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h4 class="text-white font-mono font-bold text-xs tracking-widest uppercase">Dr. Amit Sharma
+                        </h4>
+                        <p class="text-[10px] text-brandPrimary uppercase tracking-widest">Senior Fact-Checker, HT</p>
+                    </div>
+                </div>
+                <button onclick="toggleExpertChat()" class="text-slate-500 hover:text-white"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="p-4 h-80 overflow-y-auto flex flex-col gap-4 font-mono text-sm bg-darkSurface"
+                id="chat-messages">
+                <div class="flex gap-2">
+                    <div class="text-brandPrimary">></div>
+                    <div class="text-slate-300">
+                        Hello! Let me know if you are doubtful about a particular piece of news. I am here to assist.
+                        (Powered by AI & HT Database)
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 border-t border-slate-800 bg-darkBase">
+                <form id="chat-form" class="flex gap-2">
+                    <input type="text" id="chat-input" placeholder="Ask about a news..."
+                        class="flex-1 bg-transparent border-none px-2 text-sm text-white focus:outline-none font-sans placeholder:text-slate-600">
+                    <button type="submit" class="text-brandPrimary hover:text-white transition-colors">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-darkBase py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="mb-6 flex justify-center items-center gap-2">
+                <i class="fa-solid fa-shield text-brandPrimary text-2xl"></i>
+            </div>
+            <h2 class="font-display font-black text-3xl uppercase tracking-widest text-slate-700 mb-6">Truvix</h2>
+            <p class="text-slate-500 text-sm font-mono tracking-wider mb-6">
+                A decentralized portal verifying reality through the Truvix engine. Partnered with leading news organizations to stop the spread
+                of fake news.
+            </p>
+            <div class="flex justify-center gap-6 mb-8">
+                <span class="text-slate-600 hover:text-white cursor-pointer transition"><i
+                        class="fa-brands fa-twitter"></i></span>
+                <span class="text-slate-600 hover:text-white cursor-pointer transition"><i
+                        class="fa-brands fa-github"></i></span>
+                <span class="text-slate-600 hover:text-white cursor-pointer transition"><i
+                        class="fa-brands fa-discord"></i></span>
+            </div>
+            <p class="text-slate-700 text-xs text-center font-mono">
+                &copy; 2026 Truvix Portal. All verifications are cryptographically signed.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="particles.js"></script>
+    <script src="hero-compass.js"></script>
+    <script src="globe.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
