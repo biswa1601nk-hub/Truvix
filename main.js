@@ -459,7 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="text-center p-8 bg-darkBase border-2 border-red-500/50 rounded border-l-4 border-l-red-500">
                         <i class="fa-solid fa-triangle-exclamation text-4xl text-red-500 mb-4"></i>
                         <h3 class="text-xl text-white font-bold mb-2 uppercase tracking-widest">Backend Connection Error</h3>
-                        <p class="text-slate-400 text-sm mb-4">Make sure the Express server is running on localhost:3000</p>
+                        <p class="text-slate-400 text-sm mb-4">Something went wrong with our verification server. Please try again in a few moments.</p>
                         <p class="text-xs text-red-400 font-mono mb-6">${error.message}</p>
                         <button onclick="resetVerify()" class="btn-primary">Emergency Protocol: Retry</button>
                     </div>
