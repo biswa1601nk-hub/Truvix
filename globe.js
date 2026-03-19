@@ -137,15 +137,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(apiData => {
                     if (apiData && apiData.data) {
                         apiData.data.forEach(node => {
-                            const color = node.status === 'FAKE' ? 0xef4444 : 0x10b981;
+                        apiData.data.forEach(node => {
+                            const isFake = node.status === 'FAKE';
+                            const color = isFake ? 0xff3333 : 0x00ff88;
                             const desc = node.desc || "Verified by decentralized nodes. Transparency valid.";
-                            rings.push(addMarker(node.lat, node.lng, color, {
+                            
+                            // Add marker
+                            const markerRing = addMarker(node.lat, node.lng, color, {
                                 title: node.title,
                                 desc: desc,
                                 status: node.status,
                                 auth: node.auth,
                                 loc: node.loc
-                            }));
+                            });
+
+                            // For FAKE items, add an extra inner 'alert' pulse
+                            if (isFake) {
+                                markerRing.userData = { pulseSpeed: 0.05, isAlert: true };
+                            }
+                            rings.push(markerRing);
+                        });
                         });
                     }
                 })
@@ -265,6 +276,14 @@ document.addEventListener("DOMContentLoaded", () => {
             renderer.setSize(container.clientWidth, container.clientHeight);
         });
 
+        if (isInteractive) {
+            window.activeGlobe = {
+                camera,
+                controls,
+                getCoordinates // Helper to reuse within the jump function
+            };
+        }
+
         // Animation Loop
         let time = 0;
         const animateGlobe = () => {
@@ -273,9 +292,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Pulse Rings
             rings.forEach((ring, idx) => {
-                const scale = 1 + Math.sin(time + idx) * 0.3;
+                const data = ring.userData || {};
+                const speed = data.pulseSpeed || 0.02;
+                const isAlert = data.isAlert || false;
+                
+                // If it's an alert, multiply timing for a more aggressive pulse
+                const timing = isAlert ? (time * 2.5 + idx) : (time + idx);
+                const scaleModifier = isAlert ? 0.8 : 0.3;
+                
+                const scale = 1 + Math.sin(timing) * scaleModifier;
                 ring.scale.set(scale, scale, 1);
-                ring.material.opacity = 0.5 - (scale - 1);
+                ring.material.opacity = isAlert ? (0.7 - (scale - 1)) : (0.5 - (scale - 1));
             });
 
             if (!isInteractive) {
@@ -297,10 +324,42 @@ document.addEventListener("DOMContentLoaded", () => {
         animateGlobe();
     };
 
+    // Global Access for focusing nodes
+    window.focusGlobeOnNode = (lat, lng, title) => {
+        // Find the interactive globe context (we know it's the second one)
+        // For a more robust approach, we'd store the camera/controls in a global object
+        const container = document.getElementById('globe-interactive');
+        if (!container) return;
+
+        // Dispatch a custom event or use a global reference
+        // Let's create a global reference during initialization
+    };
+
     // Initialize both globes
     try {
         initGlobeContext("globe-container", false); // Background ambient
-        initGlobeContext("globe-interactive", true); // Interactive Map
+        const interactive = initGlobeContext("globe-interactive", true); // Interactive Map
+        
+        // Expose a method to focus on a node from anywhere
+        window.jumpToGlobeMarker = (lat, lng) => {
+            if (!window.activeGlobe || !window.Motion) return;
+            const { camera, controls, getCoordinates } = window.activeGlobe;
+            
+            // 1. Convert lat/lng to target 3D world position
+            const targetPos = getCoordinates(lat, lng, 120); // Zoom closer (radius is 50)
+            
+            // 2. Animate camera position
+            window.Motion.animate(camera.position, 
+                { x: targetPos.x, y: targetPos.y, z: targetPos.z }, 
+                { duration: 1.5, easing: [0.22, 1, 0.36, 1] }
+            );
+
+            // 3. Briefly disable auto-rotate to allow user to inspect the node
+            if (controls) {
+                controls.autoRotate = false;
+                setTimeout(() => { controls.autoRotate = true; }, 10000);
+            }
+        };
     } catch (e) {
         console.error("Three.js visualization error:", e);
     }

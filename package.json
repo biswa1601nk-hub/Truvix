@@ -1,7 +1,7 @@
 {
-  "name": "truthfake-backend",
+  "name": "truvix-intelligence",
   "version": "1.0.0",
-  "description": "Backend for TruthFake News Verification",
+  "description": "Truvix Intelligence Network | High-Performance News Verification",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

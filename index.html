@@ -122,13 +122,13 @@
             <button id="logout-btn" onclick="handleLogout()" class="hidden text-slate-500 hover:text-red-500 transition-colors uppercase">
                 Logout
             </button>
-            <button id="login-btn" onclick="toggleLoginModal()" class="text-white hover:text-brandPrimary transition-colors uppercase">
-                Sign In
+            <button id="login-btn" onclick="toggleLoginModal('login')" class="text-white hover:text-brandPrimary transition-colors uppercase font-bold text-sm">
+                Login
             </button>
 
-            <button onclick="toggleExpertChat()"
-                class="btn-primary transform hover:scale-105">
-                Expert Chat
+            <button id="signup-nav-btn" onclick="toggleLoginModal('signup')"
+                class="btn-primary !px-6 !py-2 !rounded-lg font-black uppercase tracking-widest text-sm transform hover:scale-105 transition-all flex items-center gap-2">
+                Sign Up
             </button>
         </nav>
 
@@ -154,54 +154,63 @@
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
 
-            <div class="mb-8 text-center">
-                <h2 class="font-display font-black text-3xl uppercase tracking-widest text-white mb-2">Truvix <span
+            <div class="mb-8 text-center" id="modal-header">
+                <h2 class="font-display font-black text-3xl uppercase tracking-widest text-white mb-2" id="modal-title">Truvix <span
                         class="text-brandPrimary">System</span></h2>
-                <p class="text-sm font-mono tracking-widest text-slate-400 uppercase">Authenticate Your Node</p>
+                <p class="text-xs font-mono tracking-widest text-slate-400 uppercase" id="modal-subtitle">Authenticate Your Node</p>
             </div>
 
-            <form class="space-y-5" onsubmit="handleLogin(event)">
+            <!-- Login Form -->
+            <form id="login-form" class="space-y-5" onsubmit="handleLogin(event)">
                 <div>
-                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-2">Agent
-                        Name</label>
-                    <input type="text" id="login-name" required
+                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-2">Agent ID / Email</label>
+                    <input type="email" id="login-email" required
                         class="w-full bg-darkSurface border border-slate-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brandPrimary transition-colors font-mono"
-                        placeholder="e.g. Neo">
+                        placeholder="john@gmail.com">
                 </div>
                 <div>
-                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-2">Clearance ID /
-                        Email</label>
-                    <input type="email" required
-                        class="w-full bg-darkSurface border border-slate-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brandPrimary transition-colors font-mono"
-                        placeholder="agent@truthfake.org">
-                </div>
-                <div>
-                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-2">Cryptographic
-                        Key / Password</label>
-                    <input type="password" required
+                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-2">Cryptographic Key / Password</label>
+                    <input type="password" id="login-password" required
                         class="w-full bg-darkSurface border border-slate-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brandPrimary transition-colors font-mono"
                         placeholder="••••••••">
                 </div>
-
-                <div class="flex items-center justify-between text-xs font-mono">
-                    <label class="flex items-center text-slate-400 cursor-pointer hover:text-white transition-colors">
-                        <input type="checkbox"
-                            class="mr-2 border-slate-800 bg-darkSurface checked:bg-brandPrimary accent-brandPrimary">
-                        Remember me
-                    </label>
-                    <a href="#" class="text-brandPrimary hover:text-white transition-colors">Reset Key?</a>
-                </div>
-
                 <button type="submit"
-                    class="w-full bg-brandPrimary text-darkBase font-bold uppercase tracking-widest py-4 rounded-lg shadow-neon hover:bg-white transition-all mt-4">
+                    class="w-full btn-primary text-darkBase font-bold uppercase tracking-widest py-4 rounded-lg mt-4 shadow-neon">
                     LOGIN
                 </button>
+                <p class="text-[10px] text-center text-slate-500 uppercase tracking-widest mt-4">
+                    New user? <a href="javascript:void(0)" onclick="toggleLoginModal('signup')" class="text-brandPrimary">Create an account</a>
+                </p>
             </form>
 
-            <div class="mt-6 text-center text-xs font-mono text-slate-500">
-                New authority node? <a href="#"
-                    class="text-brandPrimary hover:text-white uppercase tracking-widest ml-1">Request Access</a>
-            </div>
+            <!-- Signup Form -->
+            <form id="signup-form" class="space-y-4 hidden" onsubmit="handleSignup(event)">
+                <div>
+                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-1">Full Name</label>
+                    <input type="text" id="signup-name" required
+                        class="w-full bg-darkSurface border border-slate-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brandPrimary transition-colors font-mono"
+                        placeholder="John Doe">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-1">Work Email</label>
+                    <input type="email" id="signup-email" required
+                        class="w-full bg-darkSurface border border-slate-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brandPrimary transition-colors font-mono"
+                        placeholder="john@gmail.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono tracking-widest uppercase text-slate-400 mb-1">New Key / Password</label>
+                    <input type="password" id="signup-password" required
+                        class="w-full bg-darkSurface border border-slate-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-brandPrimary transition-colors font-mono"
+                        placeholder="••••••••">
+                </div>
+                <button type="submit"
+                    class="w-full btn-primary text-darkBase font-bold uppercase tracking-widest py-4 rounded-lg mt-2 shadow-neon">
+                    REGISTER
+                </button>
+                <p class="text-[10px] text-center text-slate-500 uppercase tracking-widest mt-4">
+                    Existing user? <a href="javascript:void(0)" onclick="toggleLoginModal('login')" class="text-brandPrimary">Login instead</a>
+                </p>
+            </form>
         </div>
     </div>
 
@@ -214,7 +223,7 @@
                 <div class="w-full lg:w-[55%] flex flex-col justify-center items-start text-left">
                     <div
                         class="inline-flex items-center gap-2 mb-8 fade-up text-brandPrimary font-mono font-bold tracking-widest text-xs uppercase opacity-80 border-l-2 border-brandPrimary px-4">
-                        Decentralized Consensus Engine v2.0
+                        Secure Truth Verification Engine
                     </div>
 
                     <!-- Huge Typography matching the style requested -->
@@ -228,9 +237,8 @@
                     </h1>
 
                     <p class="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl fade-up leading-relaxed font-light">
-                        Combat misinformation with our decentralized verification portal. We aggregate consensus from
-                        top
-                        authorities like Times of India, Aajtak, and Hindustan Times to give you real-time authenticity.
+                        Fight misinformation with our professional fact-checking portal. We cross-reference news with
+                        top sources like Times of India, Aajtak, and Hindustan Times to confirm authenticity.
                     </p>
 
                     <div class="flex flex-col sm:flex-row items-center gap-6 fade-up">
@@ -257,80 +265,133 @@
         <!-- Verification Tool Section -->
         <section id="verify" class="py-24 relative bg-darkBase/90 border-t border-slate-800/80">
             <div class="max-w-5xl mx-auto px-6">
-                <div class="mb-16">
-                    <h2 class="text-4xl md:text-6xl font-sans font-black text-white mb-4 tracking-tighter uppercase">
-                        News Verification Engine</h2>
-                    <p class="text-slate-400 text-lg">Cross-check unstructured data across reputed journalistic
-                        databases instantly.</p>
+                <div class="mb-1 text-center">
+                    <h2 class="text-4xl md:text-5xl font-sans font-black text-white mb-4 tracking-tighter uppercase reveal">
+                        Verification <span class="text-brandPrimary">Engine</span></h2>
+                    <p class="text-slate-400 text-lg reveal">Paste article links or news claims for professional-grade verification analysis.</p>
                 </div>
 
-                <div class="glass-card p-6 md:p-12 reveal">
-                    <form id="verify-form" class="relative">
-                        <div class="relative flex items-center group">
-                            <input type="text" id="news-url" placeholder="Paste news article URL or snippet here..."
-                                class="w-full bg-darkBase border-2 border-slate-800 text-white rounded-xl py-6 pl-8 pr-40 focus:outline-none focus:border-brandPrimary transition-colors text-lg font-mono">
-                            <button type="submit"
-                                class="absolute right-3 btn-primary !py-3 !px-6 !rounded-lg flex items-center gap-2">
-                                <i class="fa-solid fa-radar pointer-events-none"></i> Scan
-                            </button>
-                        </div>
-                    </form>
+                <!-- Actual Scan Interface (Tucked behind tabs) -->
+                <div class="mt-20">
 
-                    <!-- Loading State -->
-                    <div id="verify-loading" class="hidden mt-12 flex flex-col items-center justify-center py-10">
-                        <div class="relative w-16 h-16 mb-6">
-                            <div class="absolute inset-0 border-t-2 border-brandPrimary rounded-full animate-spin">
-                            </div>
-                            <div
-                                class="absolute inset-2 border-l-2 border-brandSecondary rounded-full animate-spin-reverse">
-                            </div>
+                    <div class="glass-card p-6 md:p-12 reveal">
+                        <!-- Article Scan -->
+                        <div id="url-scan-content">
+                            <form id="verify-form" class="relative">
+                                <div class="relative flex items-center group">
+                                    <input type="text" id="news-url" placeholder="Paste news article URL or claim here..."
+                                        class="w-full bg-darkBase border-2 border-slate-800 text-white rounded-xl py-6 pl-8 pr-40 focus:outline-none focus:border-brandPrimary transition-colors text-lg font-mono">
+                                    <button type="submit"
+                                        class="absolute right-3 btn-primary !py-3 !px-6 !rounded-lg flex items-center gap-2">
+                                        Scan Now
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                        <p class="animate-pulse text-brandPrimary font-mono text-sm tracking-widest uppercase">Querying
-                            Decentralized Nodes & Authorities...</p>
+
+
+                        <!-- Result Display -->
+                        <div id="verify-loading" class="hidden mt-12 flex flex-col items-center justify-center py-10">
+                            <div class="relative w-16 h-16 mb-6">
+                                <div class="absolute inset-0 border-t-2 border-brandPrimary rounded-full animate-spin"></div>
+                                <div class="absolute inset-2 border-l-2 border-brandSecondary rounded-full animate-spin-reverse"></div>
+                            </div>
+                            <p id="loading-text" class="animate-pulse text-brandPrimary font-mono text-sm tracking-widest uppercase">Connecting to verification databases...</p>
+                        </div>
+
+                        <div id="verify-result" class="hidden mt-10">
+                            <div class="pt-8" id="result-container"></div>
+                        </div>
                     </div>
+                </div>
+                <!-- End Suite -->
+            </div>
+        </section>
 
-                    <!-- Result State -->
-                    <div id="verify-result" class="hidden mt-10">
-                        <div class="pt-8" id="result-container">
-                            <!-- Dynamic Content Inserted Here via JS -->
-                        </div>
+        <!-- How It Works Pipeline -->
+        <section class="py-24 relative overflow-hidden bg-darkSurface/30 border-y border-slate-800/10">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-xs font-mono text-brandPrimary tracking-[0.5em] uppercase mb-4">Verification Intelligence Pipeline</h2>
+                    <h3 class="text-4xl md:text-5xl font-sans font-black text-white uppercase tracking-tighter">How We <span class="text-slate-500">Confirm The Facts</span></h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Step 1 -->
+                    <div class="glass-card p-8 group reveal">
+                        <div class="text-4xl font-black text-brandPrimary/20 mb-6 group-hover:text-brandPrimary/40 transition-colors font-mono">01</div>
+                        <i class="fa-solid fa-link text-brandPrimary text-2xl mb-4"></i>
+                        <h4 class="text-white font-bold uppercase tracking-tight mb-2">Source Check</h4>
+                        <p class="text-sm text-slate-500 leading-relaxed">System receives URL or news snippet for cross-referencing with our databases.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="glass-card p-8 group reveal">
+                        <div class="text-4xl font-black text-brandPrimary/20 mb-6 group-hover:text-brandPrimary/40 transition-colors font-mono">02</div>
+                        <i class="fa-solid fa-microchip text-brandPrimary text-2xl mb-4"></i>
+                        <h4 class="text-white font-bold uppercase tracking-tight mb-2">AI Analysis</h4>
+                        <p class="text-sm text-slate-500 leading-relaxed">Advanced analysis scans for semantic patterns and potential AI manipulation.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="glass-card p-8 group reveal border-fake/30">
+                        <div class="text-4xl font-black text-fake/20 mb-6 group-hover:text-fake/40 transition-colors font-mono">03</div>
+                        <i class="fa-solid fa-users text-fake text-2xl mb-4"></i>
+                        <h4 class="text-white font-bold uppercase tracking-tight mb-2">Community Review</h4>
+                        <p class="text-sm text-slate-500 leading-relaxed">News is cross-verified by thousands of specialized fact-checkers globally.</p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="glass-card p-8 group reveal border-truth/30">
+                        <div class="text-4xl font-black text-truth/20 mb-6 group-hover:text-truth/40 transition-colors font-mono">04</div>
+                        <i class="fa-solid fa-file-shield text-truth text-2xl mb-4"></i>
+                        <h4 class="text-white font-bold uppercase tracking-tight mb-2">Final Verdict</h4>
+                        <p class="text-sm text-slate-500 leading-relaxed">Final results are added to our registry and highlighted on the impact map.</p>
                     </div>
                 </div>
             </div>
         </section>
-
         <!-- Live Intelligence Leaflet Map -->
         <section id="map-section" class="py-24 relative overflow-hidden bg-darkSurface/50 border-t border-slate-800/50">
-            <div class="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row gap-12">
-                <div class="w-full lg:w-1/3 reveal flex flex-col justify-center">
+            <div class="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row gap-6">
+                <!-- Data Intelligence Panel -->
+                <div class="w-full lg:w-2/5 reveal flex flex-col items-center">
                     <h2
-                        class="text-4xl md:text-6xl font-sans font-black text-white mb-6 uppercase tracking-tighter leading-none">
+                        class="text-4xl md:text-5xl font-sans font-black text-white mb-6 uppercase tracking-tighter leading-none text-center">
                         Live Global<br /><span class="text-brandPrimary">Intelligence</span></h2>
-                    <p class="text-slate-400 mb-8 leading-relaxed">
-                        Interact with the map to see real-time misinformation hotspots and verified news drops around
-                        the world. Every pulse represents a detected claim.
+                    <p class="text-slate-400 mb-8 leading-relaxed text-sm text-center mx-auto max-w-sm">
+                        A high-fidelity global monitor detecting trending disinformation, AI-generated hoaxes, and 
+                        corroborated news drops across our decentralized intelligence network in real-time.
                     </p>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4 bg-darkBase p-4 border-l-2 border-fake shadow-neon-fake">
-                            <i class="fa-solid fa-satellite-dish text-fake text-xl"></i>
+                    <div class="space-y-4 w-full max-w-xs">
+                        <div class="flex items-center gap-4 bg-darkBase p-4 border-l-2 border-fake shadow-neon-fake group hover:bg-fake/5 transition-colors">
+                            <i class="fa-solid fa-satellite-dish text-fake text-xl group-hover:animate-pulse"></i>
                             <div>
-                                <h4 class="text-white font-mono text-sm uppercase">FAKE NEWS DETECTED</h4>
-                                <p class="text-xs text-slate-500">Unverified Claims Spread</p>
+                                <h4 class="text-white font-mono text-[10px] uppercase tracking-widest">FAKE NEWS DETECTED</h4>
+                                <p class="text-[9px] text-slate-500 uppercase">Unverified Claims Spread</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-4 bg-darkBase p-4 border-l-2 border-truth shadow-neon-truth">
+                        <div class="flex items-center gap-4 bg-darkBase p-4 border-l-2 border-truth shadow-neon-truth group hover:bg-truth/5 transition-colors">
                             <i class="fa-solid fa-shield-check text-truth text-xl"></i>
                             <div>
-                                <h4 class="text-white font-mono text-sm uppercase">VERIFIED TRUTH DROP</h4>
-                                <p class="text-xs text-slate-500">Backed by Trusted Authorities</p>
+                                <h4 class="text-white font-mono text-[10px] uppercase tracking-widest">VERIFIED TRUTH DROP</h4>
+                                <p class="text-[9px] text-slate-500 uppercase">Backed by Trusted Authorities</p>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Alert Feed -->
+                    <div class="mt-8 glass-card p-6 relative overflow-hidden reveal w-full max-w-sm">
+                        <div class="absolute top-0 right-0 p-2 text-[10px] font-mono text-fake animate-pulse tracking-widest uppercase">Live Link Active</div>
+                        <h4 class="text-xs font-mono text-fake tracking-widest uppercase mb-4 flex items-center gap-2">
+                           <i class="fa-solid fa-radar"></i> Suspect Activity Monitor
+                        </h4>
+                        <div id="live-map-alerts" class="space-y-4 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
+                           <div class="text-xs text-slate-500 font-mono italic">Synchronizing Global Nodes...</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Map Container -->
+                <!-- Globe Container -->
                 <div
-                    class="w-full lg:w-2/3 h-[500px] lg:h-[600px] relative glass-card bg-darkBase overflow-hidden shadow-2xl reveal">
+                    class="w-full lg:w-3/5 h-[500px] lg:h-[650px] relative overflow-hidden reveal lg:-ml-12 lg:mt-24">
                     <div id="globe-interactive" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
 
                     <!-- Globe Context Popup (Bulma Styled) -->
@@ -381,7 +442,7 @@
                             Verified News Feed</h2>
                         <p class="text-slate-400">The latest claims passing through our decentralized portal.</p>
                     </div>
-                    <a href="#"
+                    <a href="javascript:void(0)" id="view-full-archive"
                         class="text-brandPrimary hover:text-white transition-colors text-sm font-mono tracking-widest uppercase flex items-center gap-2">View
                         Full Archive <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
@@ -392,11 +453,62 @@
             </div>
         </section>
 
+        <!-- Our Impact Section -->
+        <section id="leaderboard" class="py-32 relative overflow-hidden bg-brandPrimary border-t border-slate-800/30">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-20 reveal">
+                    <h2 class="text-4xl md:text-5xl font-sans font-black text-white tracking-tighter uppercase mb-4">
+                        Truvix Impact Center</h2>
+                    <p class="text-white/70 max-w-2xl mx-auto text-lg font-light">Global verification statistics powered by our decentralized network and community contributors.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 reveal">
+                    <!-- Metric 1 -->
+                    <div class="glass-card bg-white/10 p-12 flex flex-col items-center text-center group hover:bg-white/20 transition-all border-white/20">
+                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-8 border border-white/30 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-users-viewfinder text-white text-3xl"></i>
+                        </div>
+                        <div class="text-5xl font-black text-white tracking-tighter mb-2 tabular-nums counter" data-target="8412">0</div>
+                        <p class="text-xs font-black text-white/60 uppercase tracking-widest">Active Factcheckers</p>
+                    </div>
+                    <!-- Metric 2 -->
+                    <div class="glass-card bg-white/10 p-12 flex flex-col items-center text-center group hover:bg-white/20 transition-all border-white/20">
+                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-8 border border-white/30 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-shield-heart text-white text-3xl"></i>
+                        </div>
+                        <div class="text-5xl font-black text-white tracking-tighter mb-2 tabular-nums counter" data-target="32841">0</div>
+                        <p class="text-xs font-black text-white/60 uppercase tracking-widest">Claims Verified</p>
+                    </div>
+                    <!-- Metric 3 -->
+                    <div class="glass-card bg-white/10 p-12 flex flex-col items-center text-center group hover:bg-white/20 transition-all border-white/20">
+                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-8 border border-white/30 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-earth-asia text-white text-3xl"></i>
+                        </div>
+                        <div class="text-5xl font-black text-white tracking-tighter mb-2 tabular-nums counter" data-target="74">0</div>
+                        <p class="text-xs font-black text-white/60 uppercase tracking-widest">Countries Reached</p>
+                    </div>
+                    <!-- Metric 4 -->
+                    <div class="glass-card bg-white/10 p-12 flex flex-col items-center text-center group hover:bg-white/20 transition-all border-white/20">
+                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-8 border border-white/30 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-percent text-white text-3xl"></i>
+                        </div>
+                        <div class="text-5xl font-black text-white tracking-tighter mb-2 tabular-nums counter" data-target="96">0</div>
+                        <p class="text-xs font-black text-white/60 uppercase tracking-widest">Accuracy Precision</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Expert Float Button -->
-        <div class="fixed bottom-6 right-6 z-30">
+        <div class="fixed bottom-6 right-6 z-30 group">
+             <!-- Tooltip -->
+            <div class="absolute bottom-full right-0 mb-4 bg-darkBase border border-slate-800 p-3 rounded-xl shadow-neon opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all pointer-events-none w-48">
+                <h5 class="text-white text-[10px] font-black uppercase tracking-widest mb-1">Live Expert Chat</h5>
+                <p class="text-[9px] text-slate-500 leading-tight">Talk to our professional fact-checkers in real-time. This is <span class="text-truth">NOT</span> a bot.</p>
+            </div>
             <button onclick="toggleExpertChat()"
                 class="bg-brandPrimary text-darkBase w-14 h-14 rounded-full shadow-neon flex items-center justify-center text-xl hover:scale-110 transition-transform hover:bg-white group cursor-pointer relative">
-                <i class="fa-solid fa-user-doctor group-hover:hidden"></i>
+                <i class="fa-solid fa-user-tie group-hover:hidden"></i>
                 <i class="fa-solid fa-message hidden group-hover:block"></i>
                 <span
                     class="absolute -top-1 -right-1 w-4 h-4 bg-fake rounded-full shadow-neon-fake animate-pulse border-2 border-darkBase"></span>
@@ -405,41 +517,127 @@
 
         <!-- Expert Chat Panel -->
         <div id="expert-panel"
-            class="fixed bottom-24 right-6 w-[350px] glass-card z-40 flex flex-col hidden transform origin-bottom-right transition-all overflow-hidden">
-            <div class="p-4 border-b border-slate-800 bg-darkBase flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full border-2 border-brandPrimary overflow-hidden">
-                        <img src="https://i.pravatar.cc/100?img=11" alt="Expert" class="w-full h-full object-cover">
-                    </div>
-                    <div>
-                        <h4 class="text-white font-mono font-bold text-xs tracking-widest uppercase">Dr. Amit Sharma
-                        </h4>
-                        <p class="text-[10px] text-brandPrimary uppercase tracking-widest">Senior Fact-Checker, HT</p>
-                    </div>
+            class="fixed bottom-24 right-6 w-[350px] glass-card z-40 flex flex-col hidden transform origin-bottom-right transition-all overflow-hidden border-t-4 border-brandPrimary">
+            
+            <!-- VIEW ONE: Expert Selector -->
+            <div id="expert-selector-view" class="flex flex-col h-full bg-darkBase">
+                <div class="p-4 border-b border-slate-800 bg-darkSurface">
+                    <h4 class="text-white font-sans font-black text-xs tracking-widest uppercase">Verified Expert Directory</h4>
+                    <p class="text-[10px] text-slate-500 uppercase mt-1">Select a specialist for vertical-specific verification</p>
                 </div>
-                <button onclick="toggleExpertChat()" class="text-slate-500 hover:text-white"><i
-                        class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <div class="p-4 h-80 overflow-y-auto flex flex-col gap-4 font-mono text-sm bg-darkSurface"
-                id="chat-messages">
-                <div class="flex gap-2">
-                    <div class="text-brandPrimary">></div>
-                    <div class="text-slate-300">
-                        Hello! Let me know if you are doubtful about a particular piece of news. I am here to assist.
-                        (Powered by AI & HT Database)
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-3 border-t border-slate-800 bg-darkBase">
-                <form id="chat-form" class="flex gap-2">
-                    <input type="text" id="chat-input" placeholder="Ask about a news..."
-                        class="flex-1 bg-transparent border-none px-2 text-sm text-white focus:outline-none font-sans placeholder:text-slate-600">
-                    <button type="submit" class="text-brandPrimary hover:text-white transition-colors">
-                        <i class="fa-solid fa-arrow-right"></i>
+                <div class="p-2 grid grid-cols-1 gap-2 max-h-[400px] overflow-y-auto custom-scrollbar">
+                    <!-- Expert 1 -->
+                    <button onclick="selectExpert('Aarav Mehta', 'Political Analysis', 'assets/experts/aarav.png')" 
+                        class="flex items-center gap-3 p-3 bg-white/5 hover:bg-brandPrimary/10 border border-slate-800 rounded-lg group transition-all text-left">
+                        <div class="w-10 h-10 rounded-full border border-brandPrimary/30 overflow-hidden shrink-0">
+                            <img src="assets/experts/aarav.png" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h5 class="text-white text-xs font-bold group-hover:text-brandPrimary transition-colors truncate">Aarav Mehta</h5>
+                            <p class="text-[9px] text-slate-400 uppercase tracking-tighter">Political Analysis</p>
+                        </div>
+                        <i class="fa-solid fa-landmark text-brandPrimary opacity-40 group-hover:opacity-100 transition-opacity"></i>
                     </button>
-                </form>
+                    <!-- Expert 2 -->
+                    <button onclick="selectExpert('Rohan Iyer', 'Technology & Cyber Verification', 'assets/experts/rohan.png')" 
+                        class="flex items-center gap-3 p-3 bg-white/5 hover:bg-brandPrimary/10 border border-slate-800 rounded-lg group transition-all text-left">
+                        <div class="w-10 h-10 rounded-full border border-brandPrimary/30 overflow-hidden shrink-0">
+                            <img src="assets/experts/rohan.png" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h5 class="text-white text-xs font-bold group-hover:text-brandPrimary transition-colors truncate">Rohan Iyer</h5>
+                            <p class="text-[9px] text-slate-400 uppercase tracking-tighter">Tech & Cyber Verification</p>
+                        </div>
+                        <i class="fa-solid fa-microchip text-brandPrimary opacity-40 group-hover:opacity-100 transition-opacity"></i>
+                    </button>
+                    <!-- Expert 3 -->
+                    <button onclick="selectExpert('Aditya Singh', 'Economic & Financial Analysis', 'assets/experts/aditya.png')" 
+                        class="flex items-center gap-3 p-3 bg-white/5 hover:bg-brandPrimary/10 border border-slate-800 rounded-lg group transition-all text-left">
+                        <div class="w-10 h-10 rounded-full border border-brandPrimary/30 overflow-hidden shrink-0">
+                            <img src="assets/experts/aditya.png" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h5 class="text-white text-xs font-bold group-hover:text-brandPrimary transition-colors truncate">Aditya Singh</h5>
+                            <p class="text-[9px] text-slate-400 uppercase tracking-tighter">Economic Analysis</p>
+                        </div>
+                        <i class="fa-solid fa-chart-line text-brandPrimary opacity-40 group-hover:opacity-100 transition-opacity"></i>
+                    </button>
+                    <!-- Expert 4 -->
+                    <button onclick="selectExpert('Karan Patel', 'Social Media & Viral Content', 'assets/experts/karan.png')" 
+                        class="flex items-center gap-3 p-3 bg-white/5 hover:bg-brandPrimary/10 border border-slate-800 rounded-lg group transition-all text-left">
+                        <div class="w-10 h-10 rounded-full border border-brandPrimary/30 overflow-hidden shrink-0">
+                            <img src="assets/experts/karan.png" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h5 class="text-white text-xs font-bold group-hover:text-brandPrimary transition-colors truncate">Karan Patel</h5>
+                            <p class="text-[9px] text-slate-400 uppercase tracking-tighter">Social Media Analysis</p>
+                        </div>
+                        <i class="fa-solid fa-share-nodes text-brandPrimary opacity-40 group-hover:opacity-100 transition-opacity"></i>
+                    </button>
+                    <!-- Expert 5 -->
+                    <button onclick="selectExpert('Ananya Sharma', 'Journalism & Source Verification', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200')" 
+                        class="flex items-center gap-3 p-3 bg-white/5 hover:bg-brandPrimary/10 border border-slate-800 rounded-lg group transition-all text-left">
+                        <div class="w-10 h-10 rounded-full border border-brandPrimary/30 overflow-hidden shrink-0">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h5 class="text-white text-xs font-bold group-hover:text-brandPrimary transition-colors truncate">Ananya Sharma</h5>
+                            <p class="text-[9px] text-slate-400 uppercase tracking-tighter">Source Verification</p>
+                        </div>
+                        <i class="fa-solid fa-newspaper text-brandPrimary opacity-40 group-hover:opacity-100 transition-opacity"></i>
+                    </button>
+                    <!-- Expert 6 -->
+                    <button onclick="selectExpert('Priya Nair', 'Health & Science Fact-Checking', 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=200&h=200')" 
+                        class="flex items-center gap-3 p-3 bg-white/5 hover:bg-brandPrimary/10 border border-slate-800 rounded-lg group transition-all text-left">
+                        <div class="w-10 h-10 rounded-full border border-brandPrimary/30 overflow-hidden shrink-0">
+                            <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=200&h=200" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h5 class="text-white text-xs font-bold group-hover:text-brandPrimary transition-colors truncate">Priya Nair</h5>
+                            <p class="text-[9px] text-slate-400 uppercase tracking-tighter">Health & Science</p>
+                        </div>
+                        <i class="fa-solid fa-dna text-brandPrimary opacity-40 group-hover:opacity-100 transition-opacity"></i>
+                    </button>
+                </div>
+                <button onclick="toggleExpertChat()" class="p-3 text-[10px] text-slate-500 hover:text-white uppercase font-black bg-darkSurface border-t border-slate-800">Close Directory</button>
+            </div>
+
+            <!-- VIEW TWO: Expert Chat Interface -->
+            <div id="expert-chat-view" class="flex flex-col hidden h-full">
+                <div class="p-4 border-b border-slate-800 bg-darkBase flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <button onclick="backToRegistry()" class="text-slate-500 hover:text-white mr-1 transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                        <div class="w-10 h-10 rounded-full border-2 border-brandPrimary overflow-hidden">
+                            <img id="active-expert-img" src="assets/experts/aarav.png" alt="Expert" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h4 id="active-expert-name" class="text-white font-mono font-bold text-xs tracking-widest uppercase">Expert Name</h4>
+                                <span class="w-2 h-2 rounded-full bg-truth animate-pulse"></span>
+                            </div>
+                            <p id="active-expert-specialty" class="text-[10px] text-brandPrimary uppercase tracking-widest">Specialty Title</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleExpertChat()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                
+                <div class="bg-brandPrimary/10 p-2 text-center border-b border-brandPrimary/20">
+                    <span class="text-[9px] text-brandPrimary font-black uppercase tracking-widest animate-pulse">Live Forensic Connection Established</span>
+                </div>
+
+                <div class="p-4 h-80 overflow-y-auto flex flex-col gap-4 font-mono text-xs bg-darkSurface" id="chat-messages">
+                    <!-- Messages will appear here -->
+                </div>
+
+                <div class="p-3 border-t border-slate-800 bg-darkBase">
+                    <form id="chat-form" class="flex gap-2">
+                        <input type="text" id="chat-input" placeholder="Ask about a news..."
+                            class="flex-1 bg-transparent border-none px-2 text-xs text-white focus:outline-none font-sans placeholder:text-slate-600">
+                        <button type="submit" class="text-brandPrimary hover:text-white transition-colors">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
