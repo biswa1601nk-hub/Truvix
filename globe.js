@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const rings = [];
         if (isInteractive) {
             // Fetch live data from server silently
-            fetch('http://localhost:3000/api/map-data')
+            fetch('/api/map-data')
                 .then(res => res.json())
                 .then(apiData => {
                     if (apiData && apiData.data) {

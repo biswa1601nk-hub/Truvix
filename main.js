@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             // Fetch from Express API
-            const response = await fetch('http://localhost:3000/api/analyze-image', {
+            const response = await fetch('/api/analyze-image', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ filename: input.files[0].name })
@@ -338,7 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 // Fetch from Express API
-                const response = await fetch('http://localhost:3000/api/verify', {
+                const response = await fetch('/api/verify', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -498,7 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Fetch Data from Backend
         try {
-            const res = await fetch('http://localhost:3000/api/map-data');
+            const res = await fetch('/api/map-data');
             const data = await res.json();
 
             // Map defaults to CartoDB dark_all. 
@@ -589,7 +589,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!newsGrid) return;
 
         try {
-            const res = await fetch('http://localhost:3000/api/latest-news');
+            const res = await fetch('/api/latest-news');
             const json = await res.json();
             const allNews = json.data;
 
@@ -702,7 +702,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const generateBotResponse = async (query) => {
         const expertTag = activeExpert ? activeExpert.name : "Truvix Assistant";
         try {
-            const res = await fetch('http://localhost:3000/api/chat', {
+            const res = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ q: query })
@@ -794,7 +794,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!alertContainer) return;
 
         try {
-            const res = await fetch('http://localhost:3000/api/map-data');
+            const res = await fetch('/api/map-data');
             const { data } = await res.json();
             
             if (data && data.length > 0) {

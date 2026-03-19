@@ -322,6 +322,10 @@ app.post('/api/chat', async (req, res) => {
     searchReq.end();
 });
 
-app.listen(PORT, () => {
-    console.log(`Backend Server running on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Backend Server running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
