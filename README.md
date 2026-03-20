@@ -52,7 +52,7 @@ Truvix is a state-of-the-art cybersecurity and news verification platform design
 
 ---
 
-## 🌩️ Deployment on Vercel
+## 🌩️ Deployment
 
 The project is pre-configured with `vercel.json` for seamless deployment. All API routes under `/api/*` are automatically routed to the Express backend.
 
