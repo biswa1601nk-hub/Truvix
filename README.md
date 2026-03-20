@@ -23,35 +23,6 @@ Truvix is a state-of-the-art cybersecurity and news verification platform design
 
 ---
 
-## ⚙️ How to Setup Locally
-
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/biswa1601nk-hub/Truvix.git
-   cd Truvix
-   ```
-
-2. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables**:
-   Create a `.env` file in the root and add your API keys:
-   ```env
-   NEWS_API_KEY=your_key_here
-   MAP_API_KEY=your_key_here
-   CHAT_API_KEY=your_key_here
-   ```
-
-4. **Run the Server**:
-   ```bash
-   npm start
-   ```
-   *Your portal will be live at `http://localhost:3000`*
-
----
-
 ## 🌩️ Deployment
 
 The project is pre-configured with `vercel.json` for seamless deployment. All API routes under `/api/*` are automatically routed to the Express backend.
