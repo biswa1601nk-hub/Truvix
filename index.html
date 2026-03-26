@@ -673,18 +673,11 @@
     <script src="globe.js"></script>
     <script src="main.js"></script>
 
-    <!-- Vercel Analytics Setup -->
-    <script type="importmap">
-        {
-            "imports": {
-                "@vercel/analytics": "https://cdn.jsdelivr.net/npm/@vercel/analytics/dist/index.mjs"
-            }
-        }
+    <!-- Vercel Analytics Setup for Static HTML -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>
-    <script type="module">
-        import { inject } from "@vercel/analytics";
-        inject();
-    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </body>
 
 </html>
