@@ -672,6 +672,19 @@
     <script src="hero-compass.js"></script>
     <script src="globe.js"></script>
     <script src="main.js"></script>
+
+    <!-- Vercel Analytics Setup -->
+    <script type="importmap">
+        {
+            "imports": {
+                "@vercel/analytics": "https://cdn.jsdelivr.net/npm/@vercel/analytics/dist/index.mjs"
+            }
+        }
+    </script>
+    <script type="module">
+        import { inject } from "@vercel/analytics";
+        inject();
+    </script>
 </body>
 
 </html>
